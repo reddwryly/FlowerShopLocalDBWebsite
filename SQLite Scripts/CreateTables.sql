@@ -30,7 +30,9 @@ CREATE TABLE Product (
 	CONSTRAINT CategoryOptionsProduct CHECK (Category IN ('Bouquet', 'Flower', 'Filler', 'Foliage', 'Vase', 'Ribbon', 'Cards')),
 	CONSTRAINT PriceAmount CHECK (Price >= 0),
 	CONSTRAINT CostAmount CHECK (Cost >= 0),
-	CONSTRAINT QuantityInStockAmount CHECK (QuantityInStock >= 0));
+	CONSTRAINT QuantityInStockAmount CHECK (QuantityInStock >= 0),
+    CONSTRAINT InStockQuantityCheck CHECK (
+        (QuantityInStock > 0 AND InStock = 1) OR (QuantityInStock = 0 AND InStock = 0)));
 
 CREATE TABLE CustomBouquet (
 	CustomBouquetID INTEGER PRIMARY KEY AUTOINCREMENT,
