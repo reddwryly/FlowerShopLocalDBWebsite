@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS OrderDetails;
 DROP TABLE IF EXISTS Cart;
+DROP TABLE IF EXISTS CartItems;
 DROP TABLE IF EXISTS CustomBouquetOptions;
 DROP TABLE IF EXISTS CustomBouquet;
 DROP TABLE IF EXISTS Product;
@@ -34,52 +35,48 @@ CREATE TABLE Product (
     CONSTRAINT InStockQuantityCheck CHECK (
         (QuantityInStock > 0 AND InStock = 1) OR (QuantityInStock = 0 AND InStock = 0)));
 
-CREATE TABLE CustomBouquet (
-	CustomBouquetID INTEGER PRIMARY KEY AUTOINCREMENT,
-	[Size] TEXT NOT NULL,
-	Price REAL NOT NULL,
-	Quantity INTEGER NOT NULL,
-	CONSTRAINT SizeOptions CHECK ([Size] IN ('Small', 'Medium', 'Large')),
-	CONSTRAINT PriceAmount CHECK (Price >= 0),
-	CONSTRAINT QuantityAmount CHECK (Quantity >=0));
-
 CREATE TABLE CustomBouquetOptions (
 	CustomBouquetID INTEGER,
 	ProductID INTEGER NOT NULL, 
 	Category TEXT NOT NULL,
-	Price REAL NOT NULL, 
-	CONSTRAINT CustomBouquetOptionsPK PRIMARY KEY (CustomBouquetID), --conposite primary key with prduct id
+	CONSTRAINT customBouquetpk PRIMARY KEY (CustomBouquetID), 
 	FOREIGN KEY (CustomBouquetID) REFERENCES CustomBouquet (CustomBouquetID),
 	FOREIGN KEY (ProductID) REFERENCES Product (ProductID),
-	CONSTRAINT CategoryOptionsBouquet CHECK (Category IN ('Flower1', 'Flower2', 'Filler', 'Foliage', 'Vase', 'Ribbon')),
-	CONSTRAINT PriceAmount CHECK (Price >= 0));
-	
+	CONSTRAINT CategoryOptionsBouquet CHECK (Category IN ('Flower1', 'Flower2', 'Filler', 'Foliage', 'Vase', 'Ribbon')));
+
+CREATE TABLE CustomBouquet (
+	CustomBouquetID INTEGER PRIMARY KEY AUTOINCREMENT,
+	Price REAL NOT NULL,
+	Quantity INTEGER NOT NULL,
+	CONSTRAINT PriceAmount CHECK (Price >= 0),
+	CONSTRAINT QuantityAmount CHECK (Quantity >= 0));
+
 CREATE TABLE Cart (
 	CartID INTEGER PRIMARY KEY AUTOINCREMENT,
+	Current TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CartStatus BOOLEAN DEFAULT 0, -- 0 for not yet purchased, 1 for purchased
+	CONSTRAINT CartStatusOptions CHECK (CartStatus IN(0,1)));
+
+CREATE TABLE CartItems (
+	CartID INTEGER,
 	Quantity INTEGER NOT NULL, 
-	Price REAL NOT NULL,
-	CartStatus BOOLEAN NOT NULL, -- 0 for not yet purchased, 1 for purchased
-	ProductID INTEGER NOT NULL, 
-	CustomBouquetID INTEGER NOT NULL,
+	ProductID INTEGER, --trigger to add the correct productID for customBouquet (constant) when CustomBouquet != Null
+	CustomBouquetID INTEGER,
+	CONSTRAINT CartItemsPK PRIMARY KEY (CartID, ProductID),
+	FOREIGN KEY (CartID) REFERENCES Cart (CartID),
 	FOREIGN KEY (ProductID) REFERENCES Product (ProductID),
 	FOREIGN KEY (CustomBouquetID) REFERENCES CustomBouquet (CustomBouquetID),
-	CONSTRAINT QuantityAmount CHECK (Quantity >= 0),
-	CONSTRAINT PriceAmount CHECK (Price >= 0 ),
-	CONSTRAINT CartStatusOptions CHECK (CartStatus IN('Current','Past')));
+	CONSTRAINT pkNotNull CHECK (ProductID IS NOT NULL OR CustomBouquetID IS NOT NULL),
+	CONSTRAINT QuantityAmount CHECK (Quantity >= 0));
 
 CREATE TABLE OrderDetails (
 	OrderNumber INTEGER PRIMARY KEY AUTOINCREMENT,
-	Quantity INTEGER NOT NULL,
-	Price REAL NOT NULL,
+	Total REAL NOT NULL,
 	OrderStatus TEXT NOT NULL,
-	PickUpCode TEXT UNIQUE, --create trigger to make the random 6 character code
 	Email TEXT NOT NULL,
-	ProductID INTEGER NOT NULL,
 	CartID INTEGER NOT NULL,
     FOREIGN KEY (Email) REFERENCES Customer (Email),
-	FOREIGN KEY (ProductID) REFERENCES Product (ProductID),
 	FOREIGN KEY (CartID) REFERENCES Cart (CartID),
-	CONSTRAINT QuantityAmount CHECK (Quantity >= 0),
-	CONSTRAINT PriceAmount CHECK (Price >= 0 ),
+	CONSTRAINT PriceAmount CHECK (Total >= 0 ),
 	CONSTRAINT OrderStatusOptions CHECK (OrderStatus IN ('Preparing', 'ReadyForPickUp', 'Completed')));
     

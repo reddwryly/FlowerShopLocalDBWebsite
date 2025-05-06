@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <link rel="stylesheet" href="/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop</title>
+    </head>
+    <body>
+    
+    <header>
+        <h1>Flower Shop</h1>
+        <h3>shop</h3>
+        <div class="cart">
+            <a href="/index.html">home</a>
+            <a href="/shop">shop</a>
+            <a href="">custom bouquet</a>
+            <a href="/cart"><img src="\images\cart.webp" style="width:42px;height:42px;"></a>
+        </div>
+    </header>
+    
+  <main>
+    <%- body %>
+  </main>
+    
+    <footer>
+        <div class="fixedFooter">fixed footer!</div>
+        <div class="bottomFooter">bottom footer!</div>
+    </footer>
+    
+    <script>
+        
+        const cartCreationTime = localStorage.getItem("cartCreationTime");
+        
+        if (cartCreationTime) {
+            const now = Date.now();
+            const elapsed = now - cartCreationTime;
+            const expirationTime = 30 * 60 * 1000; // 30 minutes in ms
+            const warningTime = 25 * 60 * 1000; // 5 minutes before expiration
+
+            if (elapsed < expirationTime) {
+                const timeUntilWarning = warningTime - elapsed;
+                setTimeout(() => {
+                    alert("Your cart will expire in 5 minutes!");
+                }, timeUntilWarning);
+            }
+        }
+
+        window.addEventListener('load', function() {
+            const cartCreationTime = Date.now();
+            localStorage.setItem("cartCreationTime", cartCreationTime);
+        });
+    </script>
+
+    </body>
+    </html>

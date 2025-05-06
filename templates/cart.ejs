@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <link rel="stylesheet" href="/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><Cart></title>
+    </head>
+    <body>
+    
+        <main>
+            <div>
+              <% cartItems.forEach(function(cartItem) { %>
+                <div>
+                  <a href="/product/<%= cartItem.ProductName %>">
+                    <h3><%= cartItem.ProductName %></h3>
+                    <p>Price: $<%= cartItem.Price %></p>
+                    <p>Quantity: <%= cartItem.quantity %></p>
+                  </a>
+                </div>
+              <% }); %>               
+            </div>
+        </main>
+    
+    </body>
+    </html>

@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <link rel="stylesheet" href="/style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop</title>
-</head>
-<body>
-    <h1>Shop</h1>
-    <div>
-        <% products.forEach(function(product) { %>
-            <div>
-                <a href="/product/<%= product.ProductName %>">
-                    <img src="/images/<%= product.Image %>" alt="<%= product.ProductName %>" style="width: 100px; height: 100px;">
-                    <h3><%= product.ProductName %></h3>
-                    <p>Price: $<%= product.Price %></p>
-                </a>
-            </div>
-        <% }); %>
-    </div>
-</body>
-</html>
+    </head>
+    <body>
+    
+    <main>
+        <div>
+            <% products.forEach(function(product) { %>
+                <div>
+                    <a href="/product/<%= product.ProductName %>">
+                        <img src="/images/<%= product.Image %>" alt="<%= product.ProductName %>" style="width: 100px; height: 100px;">
+                        <h3><%= product.ProductName %></h3>
+                        <p>Price: $<%= product.Price %></p>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+    </main>
+    
+    </body>
+    </html>
